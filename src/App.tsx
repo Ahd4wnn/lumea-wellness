@@ -69,7 +69,7 @@ const Navbar = ({ activePage, setPage }: { activePage: string, setPage: (p: stri
 };
 
 const Hero = ({ onExplore }: { onExplore: () => void }) => (
-  <section className="relative h-screen flex items-center overflow-hidden bg-brand-bg">
+  <section className="relative h-screen flex items-center overflow-hidden bg-brand-bg pt-32">
     <div className="absolute inset-0 z-0">
       <img 
         src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=2070&auto=format&fit=crop" 
@@ -80,7 +80,7 @@ const Hero = ({ onExplore }: { onExplore: () => void }) => (
       <div className="absolute inset-0 bg-gradient-to-r from-brand-bg via-brand-bg/60 to-transparent" />
     </div>
 
-    <div className="brochure-line-v ml-8 md:ml-20" />
+    <div className="brochure-line-v ml-8 md:ml-20 !top-24" />
 
     <div className="relative z-10 max-w-5xl px-12 md:px-32">
       <motion.div
@@ -118,8 +118,6 @@ const Hero = ({ onExplore }: { onExplore: () => void }) => (
 );
 
 const PillarCard = ({ product, index }: { product: Product, index: number }) => {
-  const Icon = product.category === 'cold' ? Thermometer : product.category === 'heat' ? Wind : Sun;
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -142,7 +140,7 @@ const PillarCard = ({ product, index }: { product: Product, index: number }) => 
           <span className="diamond-bullet uppercase text-xs tracking-[0.3em] text-brand-cyan mb-4 block">Professional Series</span>
           <h3 className="text-5xl md:text-7xl font-display font-bold mb-4 text-white leading-none">{product.name}</h3>
           <div className="brochure-line-h max-w-[100px] mb-6" />
-          <p className="text-white/60 max-w-md text-lg leading-relaxed">{product.tagline}</p>
+          <p className="text-white/60 max-w-md text-sm uppercase tracking-widest leading-relaxed">{product.tagline}</p>
         </div>
       </div>
       
@@ -153,18 +151,83 @@ const PillarCard = ({ product, index }: { product: Product, index: number }) => 
             {product.benefits.map((b, i) => (
               <div key={i} className="flex flex-col gap-2">
                 <span className="font-display text-sm font-bold uppercase tracking-wider diamond-bullet">{b.title}</span>
-                <span className="text-white/40 text-xs leading-relaxed uppercase tracking-widest">{b.description}</span>
+                <span className="text-white/40 text-[10px] leading-relaxed uppercase tracking-widest">{b.description}</span>
               </div>
             ))}
           </div>
         </div>
         <div className="flex items-end justify-end">
-          <button className="border-b-2 border-brand-cyan py-2 text-xs font-bold uppercase tracking-[0.3em] hover:text-brand-cyan transition-all">
-            Technical Specs
+          <button className="border-b-2 border-brand-cyan py-2 text-[10px] font-bold uppercase tracking-[0.3em] hover:text-brand-cyan transition-all">
+            Engineering Details
           </button>
         </div>
       </div>
     </motion.div>
+  );
+};
+
+const ProductCard = ({ product }: { product: Product }) => {
+  const [selectedModel, setSelectedModel] = useState<string | null>(null);
+
+  const handleInquiry = () => {
+    const modelText = selectedModel ? ` model: *${selectedModel}*` : "";
+    const message = `Hello Lumea Wellness, I am interested in the *${product.name}*${modelText}. Can you provide more technical details and pricing?`;
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/918086459127?text=${encodedMessage}`, '_blank');
+  };
+
+  return (
+    <div key={product.id} className="bg-brand-surface border border-white/5 p-10 flex flex-col h-full relative group hover:border-brand-cyan/40 transition-colors">
+      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 group-hover:text-brand-cyan transition-opacity font-display font-bold uppercase tracking-widest text-[8px]">
+        Tech Specification V.1
+      </div>
+      
+      <div className="flex-1">
+        <span className="text-[10px] font-bold text-brand-cyan uppercase tracking-[0.3em] diamond-bullet">{product.category} therapy</span>
+        <h3 className="text-3xl font-display font-bold mt-4 mb-2 text-white">{product.name}</h3>
+        <p className="text-white/40 text-[10px] uppercase tracking-widest mb-8 leading-relaxed h-10 overflow-hidden">{product.tagline}</p>
+        
+        <div className="brochure-line-h mb-8" />
+
+        <div className="mb-10">
+          <h4 className="text-[10px] font-bold text-brand-cyan mb-4 uppercase tracking-[0.2em] border-l-2 border-brand-cyan pl-3">Select Model</h4>
+          <div className="space-y-2">
+            {product.models.map((m, i) => (
+              <button 
+                key={i} 
+                onClick={() => setSelectedModel(m)}
+                className={`w-full text-left text-[10px] uppercase tracking-wider p-3 font-medium transition-all border ${
+                  selectedModel === m 
+                    ? 'bg-brand-cyan text-brand-bg border-brand-cyan' 
+                    : 'bg-white/5 text-white/70 border-transparent hover:border-white/20'
+                }`}
+              >
+                ✦ {m}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-12">
+          <h4 className="text-[10px] font-bold text-brand-cyan mb-4 uppercase tracking-[0.2em] border-l-2 border-brand-cyan pl-3">Engineering Specs</h4>
+          <ul className="grid grid-cols-1 gap-4">
+            {product.specs.map((s, i) => (
+              <li key={i} className="text-[10px] uppercase tracking-widest text-white/50 border-b border-white/5 pb-2">
+                {s}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      
+      <button 
+        onClick={handleInquiry}
+        className="w-full py-4 bg-transparent border-2 border-brand-cyan text-brand-cyan font-bold uppercase tracking-[0.3em] text-xs hover:bg-brand-cyan hover:text-brand-bg transition-all flex items-center justify-center gap-2 group"
+      >
+        <span>Inquire Specifications</span>
+        <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+      </button>
+    </div>
   );
 };
 
@@ -174,7 +237,7 @@ const ProductListing = ({ onBack }: { onBack: () => void }) => (
       <div className="relative pl-12">
         <div className="brochure-line-v" />
         <span className="diamond-bullet uppercase text-xs tracking-[0.3em] text-brand-cyan mb-4 block">Inventory</span>
-        <h2 className="text-5xl md:text-7xl font-display font-bold text-white mb-2 leading-none">Technical <br/> Ecosystem</h2>
+        <h2 className="text-5xl md:text-7xl font-display font-bold text-white mb-2 leading-none uppercase">Technical <br/> Ecosystem</h2>
       </div>
       <button 
         onClick={onBack}
@@ -186,43 +249,7 @@ const ProductListing = ({ onBack }: { onBack: () => void }) => (
 
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {PRODUCTS.map((product) => (
-        <div key={product.id} className="bg-brand-surface border border-white/5 p-10 flex flex-col h-full relative group hover:border-brand-cyan/40 transition-colors">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 group-hover:text-brand-cyan transition-opacity font-display font-bold uppercase tracking-widest text-[8px]">
-            Tech Specification V.1
-          </div>
-          
-          <div className="flex-1">
-            <span className="text-[10px] font-bold text-brand-cyan uppercase tracking-[0.3em] diamond-bullet">{product.category} therapy</span>
-            <h3 className="text-3xl font-display font-bold mt-4 mb-2 text-white">{product.name}</h3>
-            <p className="text-white/40 text-xs uppercase tracking-widest mb-8 leading-relaxed">{product.tagline}</p>
-            
-            <div className="brochure-line-h mb-8" />
-
-            <div className="mb-10">
-              <h4 className="text-[10px] font-bold text-brand-cyan mb-4 uppercase tracking-[0.2em] border-l-2 border-brand-cyan pl-3">Available Models</h4>
-              <ul className="space-y-3">
-                {product.models.map((m, i) => (
-                  <li key={i} className="text-[11px] uppercase tracking-wider text-white/70 bg-white/5 p-3 font-medium">✦ {m}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="mb-12">
-              <h4 className="text-[10px] font-bold text-brand-cyan mb-4 uppercase tracking-[0.2em] border-l-2 border-brand-cyan pl-3">Engineering Specs</h4>
-              <ul className="grid grid-cols-1 gap-4">
-                {product.specs.map((s, i) => (
-                  <li key={i} className="text-[10px] uppercase tracking-widest text-white/50 border-b border-white/5 pb-2">
-                    {s}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          
-          <button className="w-full py-4 bg-transparent border-2 border-brand-cyan text-brand-cyan font-bold uppercase tracking-[0.3em] text-xs hover:bg-brand-cyan hover:text-brand-bg transition-all">
-            Inquire Specifications
-          </button>
-        </div>
+        <ProductCard key={product.id} product={product} />
       ))}
     </div>
   </div>
